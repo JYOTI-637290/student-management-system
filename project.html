@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Attendance Management System</title>
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: #f0f8ff;
+        margin: 0;
+        padding: 0;
+    }
+
+    header {
+        background: linear-gradient(135deg, #3b82f6, #9333ea);
+        color: white;
+        text-align: center;
+        padding: 20px 0;
+    }
+
+    h1 {
+        margin: 0;
+        font-size: 2rem;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 40px auto;
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    input, select, button {
+        margin: 8px 0;
+        padding: 8px;
+        font-size: 1rem;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+    button {
+        background: #4f46e5;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        background: #3730a3;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 10px;
+        text-align: center;
+        border: 1px solid #ddd;
+    }
+
+    th {
+        background: #f3f4f6;
+    }
+
+    .footer {
+        text-align: center;
+        margin-top: 20px;
+        color: #555;
+        font-size: 0.9em;
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>🎓 Student Attendance Management System</h1>
+</header>
+
+<div class="container">
+    <h2>Add Student</h2>
+    <input type="text" id="studentName" placeholder="Enter student name">
+    <button onclick="addStudent()">Add</button>
+
+    <h2>Mark Attendance</h2>
+    <select id="studentSelect">
+        <option value="">Select Student</option>
+    </select>
+    <select id="attendanceStatus">
+        <option value="present">Present</option>
+        <option value="absent">Absent</option>
+    </select>
+    <button onclick="markAttendance()">Mark</button>
+
+    <h2>Attendance Records</h2>
+    <table id="attendanceTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Total Classes</th>
+                <th>Attended</th>
+                <th>Attendance %</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will appear here dynamically -->
+        </tbody>
+    </table>
+</div>
+
+<div class="footer">© 2025 Jyoti | Attendance System</div>
+
+<script>
+    let students = [];
+    let studentId = 1;
+
+    function addStudent() {
+        const name = document.getElementById('studentName').value.trim();
+        if (name === '') {
+            alert('Please enter a student name!');
+            return;
+        }
+
+        const student = {
+            id: studentId++,
+            name: name,
+            totalClasses: 0,
+            attendedClasses: 0
+        };
+
+        students.push(student);
+        document.getElementById('studentName').value = '';
+        updateStudentSelect();
+        updateTable();
+    }
+
+    function updateStudentSelect() {
+        const select = document.getElementById('studentSelect');
+        select.innerHTML = '<option value="">Select Student</option>';
+        students.forEach(s => {
+            const option = document.createElement('option');
+            option.value = s.id;
+            option.textContent = s.name;
+            select.appendChild(option);
+        });
+    }
+
+    function markAttendance() {
+        const studentId = parseInt(document.getElementById('studentSelect').value);
+        const status = document.getElementById('attendanceStatus').value;
+
+        if (!studentId) {
+            alert('Please select a student!');
+            return;
+        }
+
+        const student = students.find(s => s.id === studentId);
+        student.totalClasses++;
+        if (status === 'present') student.attendedClasses++;
+
+        updateTable();
+    }
+
+    function updateTable() {
+        const tbody = document.querySelector('#attendanceTable tbody');
+        tbody.innerHTML = '';
+
+        students.forEach(s => {
+            const row = document.createElement('tr');
+            const attendancePercentage = s.totalClasses === 0 ? 0 : ((s.attendedClasses / s.totalClasses) * 100).toFixed(2);
+            row.innerHTML = `
+                <td>${s.id}</td>
+                <td>${s.name}</td>
+                <td>${s.totalClasses}</td>
+                <td>${s.attendedClasses}</td>
+                <td>${attendancePercentage}%</td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+</script>
+
+</body>
+</html>
